@@ -2,27 +2,37 @@ import java.awt.*;
 
 public class Sprite2D {
     protected double x,y;
-    protected double xSpeed = 0;
     protected Image myImage;
-    int winWidth;
+    protected Image myImage2;
+    protected int framesDrawn;
+    protected static int winWidth;
 
-    public Sprite2D(Image i, int windowWidth) {
+    public Sprite2D(Image i) {
         myImage = i;
-        winWidth = windowWidth;
     }
 
-    public void setPosition(int xx, int yy) {
+    public void setPosition(double xx, double yy) {
         x = xx;
         y = yy;
     }
 
-    public void setXSpeed(double dx) {
-        xSpeed=dx;
-    }
-
     public void paint(Graphics g) {
-        g.drawImage(myImage, (int)x, (int)y, null);
+        framesDrawn++;
+        if(framesDrawn%100<50)
+            g.drawImage(myImage, (int)x, (int)y, null);
+        else
+            g.drawImage(myImage2, (int)x, (int)y, null);
     }
 
+    public static void setWinWidth(int w){
+        winWidth = w;
+    }
 
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
 }

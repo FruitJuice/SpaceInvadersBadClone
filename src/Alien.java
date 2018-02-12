@@ -1,31 +1,35 @@
 import java.awt.Image;
 
 public class Alien extends Sprite2D{
+    private static double xSpeed = 0;
 
-    public Alien(Image i,int windowWidth ) {
-        super(i, windowWidth);
+    public Alien(Image i, Image i2) {
+        super(i);
+        myImage2 = i2;
         xSpeed = 4;
         // TODO Auto-generated constructor stub
     }
 
     public boolean move() {
         x+=xSpeed;
-        if(x+70 >= winWidth || x <= 0) {
+        if(x<=0 || x >= winWidth-myImage.getWidth(null)) {
             return true;
         }
-        else return false;
+        else
+            return false;
     }
 
-    public void reverseDirection() {
-        if (xSpeed == 4) {
-            xSpeed = -4;
-            y += 40;
-        }
-        else if (xSpeed == -4) {
-            xSpeed = 4 ;
-            y += 40;
-        }
+    public static void reverseDirection() {
+        xSpeed=-xSpeed;
 
+    }
+
+    public static void setXSpeed(double dx) {
+        xSpeed=dx;
+    }
+
+    public void jumpDownwards() {
+        y += 20;
     }
 
 }

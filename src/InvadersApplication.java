@@ -6,13 +6,16 @@ import java.awt.image.*;
 
 public class InvadersApplication extends JFrame implements Runnable, KeyListener {
 
-    private static final Dimension WindowSize = new Dimension(700,700);
+    private static final Dimension WindowSize = new Dimension(800,600);
     private static final int NUMALIENS = 30;
     private Alien[] AliensArray = new Alien[NUMALIENS];
     private Spaceship PlayerShip;
+    private PlayerBullet Bullet;
+    private boolean bulletExists = false;
     private static String workingDirectory;
     private static boolean isGraphicsInitialised = false;
     private BufferStrategy strategy;
+
 
     public InvadersApplication() {
 
@@ -25,24 +28,20 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
         createBufferStrategy(2);
         strategy = getBufferStrategy();
 
-        ImageIcon icon2 = new ImageIcon(workingDirectory + "\\player.png");
-        PlayerShip = new Spaceship(icon2.getImage(), WindowSize.width);
-        PlayerShip.setPosition(350, 600);
+        ImageIcon icon = new ImageIcon(workingDirectory + "\\player_ship.png");
+        PlayerShip = new Spaceship(icon.getImage());
+        PlayerShip.setPosition(300, 530);
 
-        int i = 0;
-        int xx = 0;
-        int yy = 50;
-
-        ImageIcon icon = new ImageIcon(workingDirectory + "\\invader.png");
-        for(i=0; i < NUMALIENS; i++) {
-            AliensArray[i] = new Alien(icon.getImage(), WindowSize.width);
+        ImageIcon icon2 = new ImageIcon(workingDirectory + "\\alien_ship_1.png");
+        ImageIcon icon3 = new ImageIcon(workingDirectory + "\\alien_ship_2.png");
+        for(int i=0; i < NUMALIENS; i++) {
+            AliensArray[i] = new Alien(icon2.getImage(), icon3.getImage());
+            double xx = (i%5)*80 + 70;
+            double yy = (i/5)*40 + 50;
             AliensArray[i].setPosition(xx, yy);
-            xx+= 70;
-            if (xx >= 350) {
-                xx = 0;
-                yy+= 50;
-            }
         }
+
+        Sprite2D.setWinWidth(WindowSize.width);
 
         repaint();
 
@@ -59,30 +58,51 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
         while(true) {
             try {
                 Thread.sleep(20);
-            } catch (InterruptedException e) { }
+            } catch (InterruptedException e) {
+            }
 
-            for(int i = 0; i < NUMALIENS; i++) {
-                if(AliensArray[i].move()) {
-                    for(int j = 0; j < NUMALIENS; j++) {
-                        AliensArray[j].reverseDirection();
-                    }
-                    break;
+            boolean alienDirectionReversalNeeded = false;
+            for (int i = 0; i < NUMALIENS; i++) {
+                if (AliensArray[i].move()) {
+                    alienDirectionReversalNeeded = true;
+                }
+            }
+
+            if (alienDirectionReversalNeeded) {
+                Alien.reverseDirection();
+                for (int i = 0; i < NUMALIENS; i++) {
+                    AliensArray[i].jumpDownwards();
                 }
             }
 
             PlayerShip.move();
+            if(bulletExists){
+                Bullet.move();
+            }
             this.repaint();
         }
     }
 
     public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()){
-            case KeyEvent.VK_LEFT :
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_LEFT:
                 PlayerShip.setXSpeed(-4);
                 break;
-            case KeyEvent.VK_RIGHT :
+            case KeyEvent.VK_RIGHT:
                 PlayerShip.setXSpeed(4);
-                break;}
+                break;
+            case KeyEvent.VK_SPACE:
+                ImageIcon icon = new ImageIcon(workingDirectory + "\\bullet.png");
+                Bullet = new PlayerBullet(icon.getImage());
+                double x = PlayerShip.getX();
+                double y = PlayerShip.getY();
+                Bullet.setPosition(x, y);
+                bulletExists = true;
+
+
+                break;
+
+        }
 
     }
 
