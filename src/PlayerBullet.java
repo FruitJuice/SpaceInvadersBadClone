@@ -2,7 +2,7 @@ import java.awt.Image;
 
 public class PlayerBullet extends Sprite2D{
 
-    private static double ySpeed = 4;
+    private static double ySpeed = -4;
 
     public PlayerBullet(Image i) {
         super(i);
@@ -12,9 +12,5 @@ public class PlayerBullet extends Sprite2D{
     public void move() {
         y+=ySpeed;
     }
-
-    public void setYSpeed(double dy) {
-        ySpeed=dy;
-    }
-
+    
 }

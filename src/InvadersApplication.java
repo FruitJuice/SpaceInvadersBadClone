@@ -3,6 +3,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import javax.swing.*;
 import java.awt.image.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class InvadersApplication extends JFrame implements Runnable, KeyListener {
 
@@ -10,11 +12,10 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
     private static final int NUMALIENS = 30;
     private Alien[] AliensArray = new Alien[NUMALIENS];
     private Spaceship PlayerShip;
-    private PlayerBullet Bullet;
-    private boolean bulletExists = false;
     private static String workingDirectory;
     private static boolean isGraphicsInitialised = false;
     private BufferStrategy strategy;
+    private ArrayList<PlayerBullet> bulletsList = new ArrayList<>();
 
 
     public InvadersApplication() {
@@ -76,8 +77,8 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
             }
 
             PlayerShip.move();
-            if(bulletExists){
-                Bullet.move();
+            for(PlayerBullet b: bulletsList){
+                b.move();
             }
             this.repaint();
         }
@@ -92,14 +93,7 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
                 PlayerShip.setXSpeed(4);
                 break;
             case KeyEvent.VK_SPACE:
-                ImageIcon icon = new ImageIcon(workingDirectory + "\\bullet.png");
-                Bullet = new PlayerBullet(icon.getImage());
-                double x = PlayerShip.getX();
-                double y = PlayerShip.getY();
-                Bullet.setPosition(x, y);
-                bulletExists = true;
-
-
+                shootBullet();
                 break;
 
         }
@@ -116,6 +110,16 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 
     }
 
+    public void shootBullet() {
+    // add a new bullet to our list
+        ImageIcon icon4 = new ImageIcon(workingDirectory + "\\bullet.png");
+        Image bulletImage = icon4.getImage();
+        PlayerBullet b = new PlayerBullet(bulletImage);
+        b.setPosition(PlayerShip.x+24.5, PlayerShip.y);
+        bulletsList.add(b);
+    }
+
+
     public void paint(Graphics g) {
         if(isGraphicsInitialised) {
             g = strategy.getDrawGraphics();
@@ -123,8 +127,16 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
             g.fillRect(0, 0, WindowSize.width, WindowSize.height);
             for(int i = 0; i < NUMALIENS; i++) {
                 AliensArray[i].paint(g);
-                PlayerShip.paint(g);
             }
+
+            Iterator<PlayerBullet> iterator = bulletsList.iterator();
+            while(iterator.hasNext()){
+                PlayerBullet b = (PlayerBullet) iterator.next();
+                b.paint(g);
+            }
+
+            PlayerShip.paint(g);
+
             g.dispose();
             strategy.show();
         }

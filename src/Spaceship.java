@@ -11,6 +11,15 @@ public class Spaceship extends Sprite2D{
 
     public void move() {
         x+=xSpeed;
+
+        if(x<=0){
+            x=0;
+            xSpeed=0;
+        }
+        else if(x>=winWidth-myImage.getWidth(null)){
+            x=winWidth-myImage.getWidth(null);
+            xSpeed = 0;
+        }
     }
 
     public void setXSpeed(double dx) {
