@@ -10,7 +10,7 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
 
     private static final Dimension WindowSize = new Dimension(800,600);
     private static final int NUMALIENS = 30;
-    private Alien[] AliensArray = new Alien[NUMALIENS];
+    private ArrayList<Alien> AliensArray = new ArrayList<>();
     private Spaceship PlayerShip;
     private static String workingDirectory;
     private static boolean isGraphicsInitialised = false;
@@ -36,10 +36,11 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
         ImageIcon icon2 = new ImageIcon(workingDirectory + "\\alien_ship_1.png");
         ImageIcon icon3 = new ImageIcon(workingDirectory + "\\alien_ship_2.png");
         for(int i=0; i < NUMALIENS; i++) {
-            AliensArray[i] = new Alien(icon2.getImage(), icon3.getImage());
+            Alien tempAlien = new Alien(icon2.getImage(), icon3.getImage());
+            AliensArray.add(tempAlien);
             double xx = (i%5)*80 + 70;
             double yy = (i/5)*40 + 50;
-            AliensArray[i].setPosition(xx, yy);
+            AliensArray.get(i).setPosition(xx, yy);
         }
 
         Sprite2D.setWinWidth(WindowSize.width);
@@ -63,16 +64,16 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
             }
 
             boolean alienDirectionReversalNeeded = false;
-            for (int i = 0; i < NUMALIENS; i++) {
-                if (AliensArray[i].move()) {
+            for (int i = 0; i < AliensArray.size(); i++) {
+                if (AliensArray.get(i).move()) {
                     alienDirectionReversalNeeded = true;
                 }
             }
 
             if (alienDirectionReversalNeeded) {
                 Alien.reverseDirection();
-                for (int i = 0; i < NUMALIENS; i++) {
-                    AliensArray[i].jumpDownwards();
+                for (int i = 0; i < AliensArray.size(); i++) {
+                    AliensArray.get(i).jumpDownwards();
                 }
             }
 
@@ -80,6 +81,32 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
             for(PlayerBullet b: bulletsList){
                 b.move();
             }
+
+            for(int i = 0; i < AliensArray.size(); i++)
+            {
+                Alien alienTest = AliensArray.get(i);
+                double h1 = alienTest.myImage.getHeight(null);
+                double w1 = alienTest.myImage.getWidth(null);
+
+                double x1 = alienTest.x;
+                double y1 = alienTest.y;
+
+                for(int j = 0; j < bulletsList.size(); j++){
+                    PlayerBullet bulletTest = bulletsList.get(j);
+                    double h2 = bulletTest.myImage.getHeight(null);
+                    double w2 = bulletTest.myImage.getWidth(null);
+
+                    double x2 = bulletTest.x;
+                    double y2 = bulletTest.y;
+
+                    if (((x1<x2 && x1+w1>x2) || (x2<x1 && x2+w2>x1)) && ((y1<y2 && y1+h1>y2) || (y2<y1 && y2+h2>y1))){
+                        bulletsList.remove(j);
+                        AliensArray.remove(i);
+                    }
+
+                }
+            }
+
             this.repaint();
         }
     }
@@ -111,7 +138,6 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
     }
 
     public void shootBullet() {
-    // add a new bullet to our list
         ImageIcon icon4 = new ImageIcon(workingDirectory + "\\bullet.png");
         Image bulletImage = icon4.getImage();
         PlayerBullet b = new PlayerBullet(bulletImage);
@@ -125,13 +151,13 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
             g = strategy.getDrawGraphics();
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, WindowSize.width, WindowSize.height);
-            for(int i = 0; i < NUMALIENS; i++) {
-                AliensArray[i].paint(g);
+            for(int i = 0; i < AliensArray.size(); i++) {
+                AliensArray.get(i).paint(g);
             }
 
             Iterator<PlayerBullet> iterator = bulletsList.iterator();
             while(iterator.hasNext()){
-                PlayerBullet b = (PlayerBullet) iterator.next();
+                PlayerBullet b = iterator.next();
                 b.paint(g);
             }
 
@@ -141,6 +167,8 @@ public class InvadersApplication extends JFrame implements Runnable, KeyListener
             strategy.show();
         }
     }
+
+
 
     public static void main(String[] args) {
         workingDirectory = System.getProperty("user.dir");
