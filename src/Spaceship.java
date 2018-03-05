@@ -2,7 +2,6 @@ import java.awt.Image;
 
 public class Spaceship extends Sprite2D{
 
-    private double xSpeed = 0;
 
     public Spaceship(Image i) {
         super(i);
@@ -22,8 +21,5 @@ public class Spaceship extends Sprite2D{
         }
     }
 
-    public void setXSpeed(double dx) {
-        xSpeed=dx;
-    }
 
 }

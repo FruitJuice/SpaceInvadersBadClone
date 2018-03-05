@@ -2,6 +2,7 @@ import java.awt.*;
 
 public class Sprite2D {
     protected double x,y;
+    protected double xSpeed=0;
     protected Image myImage;
     protected Image myImage2;
     protected int framesDrawn;
@@ -22,6 +23,10 @@ public class Sprite2D {
             g.drawImage(myImage, (int)x, (int)y, null);
         else
             g.drawImage(myImage2, (int)x, (int)y, null);
+    }
+
+    public void setXSpeed(double dx){
+        xSpeed = dx;
     }
 
     public static void setWinWidth(int w){

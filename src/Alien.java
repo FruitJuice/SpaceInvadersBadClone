@@ -6,8 +6,6 @@ public class Alien extends Sprite2D{
     public Alien(Image i, Image i2) {
         super(i);
         myImage2 = i2;
-        xSpeed = 4;
-        // TODO Auto-generated constructor stub
     }
 
     public boolean move() {
@@ -19,17 +17,9 @@ public class Alien extends Sprite2D{
             return false;
     }
 
-    public static void reverseDirection() {
+    public void reverseDirection() {
         xSpeed=-xSpeed;
+        y+=20;
 
     }
-
-    public static void setXSpeed(double dx) {
-        xSpeed=dx;
-    }
-
-    public void jumpDownwards() {
-        y += 20;
-    }
-
 }
